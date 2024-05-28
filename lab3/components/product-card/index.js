@@ -7,11 +7,21 @@ export class ProductCardComponent {
         return (
             `
                 <div class="card" style="width: 300px;">
-                    <img class="card-img-top" src="${data.src}" alt="картинка">
+                    <img ${data.popverTabindex}
+                        class="card-img-top" 
+                        src="${data.src}" 
+                        data-bs-toggle="popover"
+                        ${data.popoverTrigger}
+                        data-bs-placement="bottom"
+                        ${data.popoverTitle}
+                        ${data.popoverContent}
+                        data-bs-delay='{"show":${data.showDelay},"hide":${data.hideDelay}}'
+                        style="height: 200px;" 
+                        alt="картинка">
                     <div class="card-body">
                         <h5 class="card-title">${data.title}</h5>
                         <p class="card-text">${data.text}</p>
-                        <button class="btn btn-primary" id="click-card-${data.id}" data-id="${data.id}">Нажми на меня</button>
+                        <button class="btn btn-primary" id="click-card-${data.id}" data-id="${data.id}">Подробнее</button>
                     </div>
                 </div>
             `

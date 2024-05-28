@@ -3,17 +3,18 @@ import {BackButtonComponent} from "../../components/back-button/index.js";
 import {MainPage} from "../main/index.js";
 
 export class ProductPage {
-    constructor(parent, id) {
+    constructor(parent, id, src) {
         this.parent = parent
         this.id = id
+        this.src = src
     }
 
     getData() {
         return {
-            id: 1,
-            src: "https://i.pinimg.com/originals/c9/ea/65/c9ea654eb3a7398b1f702c758c1c4206.jpg",
-            title: `Акция ${this.id}`,
-            text: "Такой акции вы еще не видели"
+            id: this.id,
+            src: this.src,
+            title: `Дизайн`,
+            text: "Такой дизайн вы еще не видели"
         }
     }
 
@@ -24,7 +25,7 @@ export class ProductPage {
     getHTML() {
         return (
             `
-                <div id="product-page"></div>
+                <div id="product-page" style="height: 540px;"></div>
             `
         )
     }
