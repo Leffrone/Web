@@ -5,10 +5,10 @@ import {ajax} from "../../modules/ajax.js";
 import {urls} from "../../modules/urls.js";
 
 export class ProductPage {
-    constructor(parent, id, src) {
+    constructor(parent, id, lastPeerId) {
         this.parent = parent
         this.id = id
-        this.src = src
+        this.lastPeerId = lastPeerId
     }
 
     getData() {
@@ -30,7 +30,8 @@ export class ProductPage {
     }
 
     clickBack() {
-        const mainPage = new MainPage(this.parent)
+        console.log('Кнопка назад', this.lastPeerId)
+        const mainPage = new MainPage(this.parent, this.lastPeerId)
         mainPage.render()
     }
     

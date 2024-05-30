@@ -2,36 +2,20 @@ import {ProductCardComponent} from "../../components/product-card/index.js";
 import {ProductPage} from "../product/index.js";
 import {ajax} from "../../modules/ajax.js";
 import {urls} from "../../modules/urls.js";
-import {groupId} from "../../modules/consts.js";
+import {PeerIdSelectComponent} from "../../components/peerId-select/index.js";
 
 export class MainPage {
-    constructor(parent) {
-        this.parent = parent;
+    constructor(parent, peerId = null) {
+        this.parent = parent
+        console.log('В конструкторе: ', peerId)
+        this.peerId = peerId
     }
 
-    getData() {
-        ajax.post(urls.getGroupMembers(groupId), (data) => {
-            this.renderData(data.response.items)
-        })
-
-        //Вывод peer id в консоль для проверки
-        ajax.post(urls.getConversations(groupId), (data) =>{
-            this.getMembersData(data)
-        })
-    }
-
-    getMembersData(data){
-        //Вывод peer id
-        console.log(data.response.items)
-        data.response.items.forEach((item) => {
-            console.log(item.conversation.peer.id)
-        })
-
-        console.log(data.response.items[1].conversation.peer.id)
-        let peerId = data.response.items[1].conversation.peer.id
-        //Получение данных об участниках чата
-        ajax.post(urls.getConversationMembers(peerId), (data) => {
+    getData(){
+        ajax.post(urls.getConversationMembers(this.peerId), (data) => {
+            console.log(`Данные запроса об участниках чата...`)
             console.log(data)
+            this.renderData(data.response.items.slice(1))
         })
     }
     
@@ -42,7 +26,7 @@ export class MainPage {
     getHTML() {
         return (
             `
-                <div id="main-page" class="d-flex flex-wrap"><div/>
+                <div id="main-page" class="d-flex flex-wrap"></div>
             `
         )
     }
@@ -50,22 +34,38 @@ export class MainPage {
     clickCard(e) {
         const cardId = e.target.dataset.id
     
-        const productPage = new ProductPage(this.parent, cardId)
+        const productPage = new ProductPage(this.parent, cardId, this.peerId)
         productPage.render()
     }
 
+    handleOnChange()
+    {
+        this.peerId = document.getElementById("peerIdSelect").value
+        this.render()
+    }
+
     renderData(items) {
+        console.log('Создание карточек...')
         items.forEach((item) => {
             console.log(item)
-            const productCard = new ProductCardComponent(this.pageRoot)
-            productCard.render(item, this.clickCard.bind(this))
+
+            ajax.post(urls.getUserInfo(item.member_id), (data) => {
+                console.log(data)
+                const productCard = new ProductCardComponent(this.pageRoot)
+                productCard.render(data.response[0], this.clickCard.bind(this))
+            })
         })
     }
         
     render() {
+        console.log('peerId: ', this.peerId)
         this.parent.innerHTML = ''
         const html = this.getHTML()
         this.parent.insertAdjacentHTML('beforeend', html)
+
+        console.log('Создание селекта...')
+        const peerIdSelect = new PeerIdSelectComponent(this.pageRoot, this.peerId)
+        peerIdSelect.render(this.handleOnChange.bind(this))
     
         this.getData()
     }
